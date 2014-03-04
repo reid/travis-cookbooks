@@ -22,6 +22,13 @@
 # THE SOFTWARE.
 
 
+user "travis" do
+    action :create
+    supports :manage_home => true
+    home "/home/travis"
+    shell "/bin/bash"
+end
+
 cookbook_file "/etc/profile.d/travis_environment.sh" do
   owner node.travis_build_environment.user
   group node.travis_build_environment.group
@@ -117,14 +124,3 @@ cookbook_file(maven_user_settings) do
   source "ci_user/maven_user_settings.xml"
 end
 
-
-# link /home/vagrant for those poor projects that absolutely depend on that legacy
-# home directory to be present. MK.
-if node.travis_build_environment.user != "vagrant"
-  link "/home/vagrant" do
-    owner node.travis_build_environment.user
-    group node.travis_build_environment.group
-
-    to node.travis_build_environment.home
-  end
-end
